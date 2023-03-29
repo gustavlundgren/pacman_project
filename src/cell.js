@@ -9,8 +9,9 @@ class Cell {
     this.w = w;
     this.h = h;
 
-    this.parent;
+    this.parent = undefined;
     this.f = 100000;
+    this.g = 0;
 
     this.wall = wall;
     this.food = !wall;
