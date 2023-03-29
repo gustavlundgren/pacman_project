@@ -121,7 +121,7 @@ function aStar(grid, start, end, h) {
   start.color = "red";
   end.color = "blue";
 
-  while (openSet.length > 0) {
+  for (let i = 0; i < 30; i++) {
     if (current !== end) {
       // Lägger till alla raka grannar
       current.i !== 0 && neighbors.push(grid.cells[current.i - 1][current.j]);
@@ -150,7 +150,7 @@ function aStar(grid, start, end, h) {
         closedSet[i].color = "red";
       }
 
-      return fullPath;
+      
     } else {
       return fullPath;
     }
