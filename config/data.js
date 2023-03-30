@@ -5,4 +5,7 @@ const data = {
   ghostSize: 15,
   wallPercentage: 0,
   turnZoneRadius: 2,
+  cols: 15,
+  rows: 15,
+  fps: 100,
 };
