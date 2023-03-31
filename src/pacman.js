@@ -1,7 +1,7 @@
 class Pacman {
   constructor(grid) {
-    this.x = grid.cells[1][5].x + grid.cells[1][5].w / 2;
-    this.y = grid.cells[1][5].y + grid.cells[1][5].h / 2;
+    this.x = grid.cells[0][0].x + grid.cells[0][0].w / 2;
+    this.y = grid.cells[0][0].y + grid.cells[0][0].h / 2;
 
     this.r = data.playerSize;
 
