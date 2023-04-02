@@ -11,7 +11,11 @@ const grid = new Grid(data.cols, data.rows, canvas.width, canvas.height);
 grid.makeGrid();
 
 const p = new Pacman(grid);
-const ghost = new Ghost(grid, [1, 1], "blue");
+const ghost = new Ghost(grid, [10, 5], "blue");
+const ghost1 = new Ghost(grid, [2, 13], "blue");
+
+pathFind(grid, getCurrentCell(grid, ghost), getCurrentCell(grid, p));
+pathFind(grid, getCurrentCell(grid, ghost1), getCurrentCell(grid, p));
 
 function animate(timestamp) {
   let deltaTime = timestamp - lastTime;
@@ -22,9 +26,11 @@ function animate(timestamp) {
   grid.update(deltaTime);
   p.update(deltaTime);
   ghost.update(deltaTime);
+  ghost1.update(deltaTime);
 
   grid.draw(ctx);
   ghost.draw(ctx);
+  ghost1.draw(ctx);
   p.draw(ctx);
 
   setTimeout(() => {
@@ -34,31 +40,20 @@ function animate(timestamp) {
 
 animate();
 
-function getCurrentCell(grid, player) {
+function getCurrentCell(grid, obj) {
   for (let i = 0; i < grid.rowCount; i++) {
     for (let j = 0; j < grid.colCount; j++) {
       if (
-        player.x > grid.cells[i][j].x &&
-        player.x < grid.cells[i][j].x + grid.cells[i][j].w &&
-        player.y > grid.cells[i][j].y &&
-        player.y < grid.cells[i][j].y + grid.cells[i][j].w
+        obj.x > grid.cells[i][j].x &&
+        obj.x < grid.cells[i][j].x + grid.cells[i][j].w &&
+        obj.y > grid.cells[i][j].y &&
+        obj.y < grid.cells[i][j].y + grid.cells[i][j].w
       ) {
         return grid.cells[i][j];
       }
     }
   }
 }
-
-// function centerPlayer(grid, player) {
-//   let cell = getCurrentCell(grid, player);
-
-//   if (player.dir === "r" || player.dir === "l") {
-//     player.y = cell.y + cell.h / 2;
-//   }
-//   if (player.dir === "u" || player.dir === "d") {
-//     player.x = cell.x + cell.w / 2;
-//   }
-// }
 
 function inTurnZone(grid, player, d) {
   let cell = getCurrentCell(grid, player);
@@ -106,86 +101,27 @@ function checkForWall(grid, player, dir) {
   return true;
 }
 
-// function aStar(grid, start, end) {
-//   let current = start;
-//   let fullPath = [];
-//   let openSet = [start];
-//   let closedSet = [];
-//   let neighbors = [];
-//   let done = false;
-//   let newPath = true;
+function pathFind(grid, start, end) {
+  let current = start;
+  let winner = { cell: null, h: 100000 };
 
-//   end.color = "blue";
+  if (current === end) {
+    console.log("done");
+    return;
+  } else {
+    let neighbors = getCellNeighbors(grid, current);
 
-//   if (openSet.length > 0 && !done) {
-//     let winner = 0;
+    for (let i = 0; i < neighbors.length; i++) {
+      let h = heuristic(neighbors[i], end);
 
-//     for (let i = 0; i < openSet.length; i++) {
-//       openSet[i].color = "green";
-//       if (openSet[i].f < openSet[winner].f) {
-//         winner = i;
-//       }
-//     }
-
-//     current = openSet[winner];
-
-//     if (current === end) {
-//       let temp = current;
-
-//       fullPath.push(temp);
-
-//       while (temp.parent) {
-//         fullPath.push(temp.parent);
-//         temp = temp.parent;
-//       }
-
-//       done = true;
-//       console.log(fullPath);
-//       console.log("done");
-//     }
-
-//     removeFromArrey(openSet, current);
-//     closedSet.push(current);
-//   }
-
-//   // Lägger till alla raka grannar
-//   neighbors = getCellNeighbors(grid, current);
-
-//   for (let i = 0; i < neighbors.length; i++) {
-//     let neighbor = neighbors[i];
-
-//     if (!closedSet.includes(neighbor) && !neighbor.wall) {
-//       let tempG = current.g + 1;
-
-//       newPath = false;
-
-//       if (openSet.includes(neighbor)) {
-//         if (tempG < neighbor.g) {
-//           neighbor.g = tempG;
-//           newPath = true;
-//         }
-//       } else {
-//         neighbor.g = tempG;
-//         newPath = true;
-//         openSet.push(neighbor);
-//       }
-
-//       if (newPath) {
-//         neighbor.h = heuristic(neighbor, end);
-//         neighbor.f = neighbor.g + neighbor.h;
-//         neighbor.parent = current;
-//       }
-//     }
-//   }
-
-//   for (let i = 0; i < openSet.length; i++) {
-//     openSet[i].color = "green";
-//   }
-
-//   for (let i = 0; i < closedSet.length; i++) {
-//     closedSet[i].color = "red";
-//   }
-// }
+      if (h < winner.h) {
+        winner = { cell: neighbors[i], h: h };
+      }
+    }
+    winner.cell.color = "blue";
+  }
+  pathFind(grid, winner.cell, end);
+}
 
 // Subfunctions för A*
 
@@ -220,24 +156,4 @@ function dist(x1, y1, x2, y2) {
 function heuristic(a, b) {
   let d = dist(a.x, a.y, b.x, b.y);
   return d;
-}
-
-function pathFind(grid, current, end) {
-  current = current;
-
-  neighbors = getCellNeighbors(grid, current);
-
-  for (let i = 0; i < neighbors.length; i++) {
-    let neighbor = neighbors[i];
-
-    if (!neighbor.wall) {
-      let h = heuristic(neighbor, end);
-      let tempG = current.g + 1;
-
-      if (tempG < neighbor.g) {
-        neighbor.g = tempG;
-        openSet.push(neighbor);
-      }
-    }
-  }
 }
