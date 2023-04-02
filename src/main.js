@@ -114,7 +114,7 @@ function pathFind(grid, start, end) {
     for (let i = 0; i < neighbors.length; i++) {
       let h = heuristic(neighbors[i], end);
 
-      if (h < winner.h) {
+      if (h < winner.h && !neighbors[i].wall) {
         winner = { cell: neighbors[i], h: h };
       }
     }

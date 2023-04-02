@@ -3,7 +3,7 @@ const data = {
   ghostSpeed: 0.15,
   playerSize: 20,
   ghostSize: 15,
-  wallPercentage: 0,
+  wallPercentage: 0.3,
   turnZoneRadius: 2,
   cols: 15,
   rows: 15,
