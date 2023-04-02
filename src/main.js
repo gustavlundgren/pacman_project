@@ -12,10 +12,10 @@ grid.makeGrid();
 
 const p = new Pacman(grid);
 const ghost = new Ghost(grid, [10, 5], "blue");
-const ghost1 = new Ghost(grid, [2, 13], "blue");
 
-pathFind(grid, getCurrentCell(grid, ghost), getCurrentCell(grid, p));
-pathFind(grid, getCurrentCell(grid, ghost1), getCurrentCell(grid, p));
+console.log(
+  pathFind(grid, getCurrentCell(grid, ghost), getCurrentCell(grid, p))
+);
 
 function animate(timestamp) {
   let deltaTime = timestamp - lastTime;
@@ -26,11 +26,9 @@ function animate(timestamp) {
   grid.update(deltaTime);
   p.update(deltaTime);
   ghost.update(deltaTime);
-  ghost1.update(deltaTime);
 
   grid.draw(ctx);
   ghost.draw(ctx);
-  ghost1.draw(ctx);
   p.draw(ctx);
 
   setTimeout(() => {
@@ -107,6 +105,7 @@ function pathFind(grid, start, end) {
 
   if (current === end) {
     console.log("done");
+    console.log(path);
     return;
   } else {
     let neighbors = getCellNeighbors(grid, current);
@@ -120,7 +119,8 @@ function pathFind(grid, start, end) {
     }
     winner.cell.color = "blue";
   }
-  pathFind(grid, winner.cell, end);
+  path.push(pathFind(grid, winner.cell, end));
+  return winner.cell;
 }
 
 // Subfunctions för A*
